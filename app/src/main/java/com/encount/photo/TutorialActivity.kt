@@ -34,11 +34,12 @@ class TutorialActivity : WelcomeActivity() {
     override fun configuration(): WelcomeConfiguration {
         return WelcomeConfiguration.Builder(this)
             .defaultBackgroundColor(BackgroundColor(Color.BLUE))
-            .page(TitlePage(R.mipmap.ic_launcher, "Encountへようこそ！"))
+            .page(TitlePage(R.mipmap.ic_launcher,
+                "Encountへようこそ！"))
             .page(BasicPage(
-                android.R.drawable.ic_delete,
+                R.mipmap.ic_launcher,
                 "新たな景色にエンカウント！",
-                "いつもの道でも観光地でも、他の人から見た風景を見れる！")
+                "いつもの道でも観光地でも、新たな風景に出会える！")
                 .background(BackgroundColor(Color.BLUE)))
             .page(
                 BasicPage(
@@ -46,6 +47,13 @@ class TutorialActivity : WelcomeActivity() {
                 "新たな観光地を生み出そう！",
                 "良いなと思える景色があったら、写真を投稿して誰かに見てもらおう！")
                 .background(BackgroundColor(Color.BLUE))
+            )
+            .page(
+                BasicPage(
+                    android.R.drawable.ic_btn_speak_now,
+                    "さあ、はじめよう！",
+                    "")
+                    .background(BackgroundColor(Color.BLUE))
             )
             .swipeToDismiss(true)
             .build()
