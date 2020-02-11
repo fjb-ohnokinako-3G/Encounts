@@ -47,6 +47,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         TutorialActivity.showIfNeeded(this@MainActivity,savedInstanceState)
+        //TutorialActivity.showForcibly(this@MainActivity)
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
