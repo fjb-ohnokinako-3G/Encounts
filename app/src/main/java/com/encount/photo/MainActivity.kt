@@ -45,6 +45,8 @@ class MainActivity : AppCompatActivity() {
             )
             checkPermission(permissions, REQUEST_CODE)
         }
+
+        TutorialActivity.showIfNeeded(this@MainActivity,savedInstanceState)
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
