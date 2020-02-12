@@ -49,6 +49,7 @@ class MapsHome : Fragment(), OnMapReadyCallback {
     //下のfor文内で使うカウント変数
     var ccnt = 0
 
+    var markerFlag: Boolean = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -91,12 +92,24 @@ class MapsHome : Fragment(), OnMapReadyCallback {
 
                 if (location != null) {
 
+                    //前回マップ上に打ったピンを全て削除
+                    if (markerFlag.equals(true)) {
+                        println("ここでまーかーを削除")
+                        mmm!!.remove()
+                    }
+
+
+                    //グローバル変数に位置情報を代入
                     latitude = location.latitude
                     longitude = location.longitude
 
                     ivSpotPost.visibility = View.VISIBLE
 
-                    //グローバル変数に位置情報を代入
+                    //MapPostGet(this,lat,lng).execute()で緯度経度を引数にして渡す
+                    //MapPostGet(this@MapsHome).execute()
+                    //サーバと通信する処理（インナークラス）を呼び出して実行する
+                    SpotPhotoGet(this@MapsHome).execute()
+                    println("取得した件数"+cnt)
 
                     mMap!!.setMyLocationEnabled(true)
                     //mMap!!.moveCamera(CameraUpdateFactory.newLatLng(LatLng(latitude, longitude)))
@@ -117,10 +130,8 @@ class MapsHome : Fragment(), OnMapReadyCallback {
                     val adminArea = addressList?.first()!!.adminArea
                     println(adminArea)
 
-                    //MapPostGet(this,lat,lng).execute()で緯度経度を引数にして渡す
-                    //MapPostGet(this@MapsHome).execute()
-                    //サーバと通信する処理（インナークラス）を呼び出して実行する
-                    SpotPhotoGet(this@MapsHome).execute()
+
+
 
                     //マップの移動範囲を制限
                     var maxLat = latitude + 0.001
@@ -133,27 +144,31 @@ class MapsHome : Fragment(), OnMapReadyCallback {
                     //写真が１件以上あれば、マップのピンを立てる処理を行う
                     if (cnt >= 1) {
 
+
+
                         ccnt = 0
+
+                        println("ccnt" + ccnt)
 
                         //取得した写真の件数分ピンを打つ処理
                         //for(i in postList)にすると、初回の写真取得で数値がおかしくなるので、仕方なく変数を用意している。
 
                         for (i in 0..cnt - 1) {
 
-                            //前回マップ上に打ったピンを全て削除
-                            if (mmm != null) {
-                                mmm!!.remove()
-                            }
+                            println("i" + i)
+                            println("path" + postList[i].imagePath)
+                            println("path" + postList[i].imageLat)
+                            println("path" + postList[i].imageLng)
 
                             val spot = LatLng(
 
-                                postList[ccnt].imageLat.toDouble(),
-                                postList[ccnt].imageLng.toDouble()
+                                postList[i].imageLat.toDouble(),
+                                postList[i].imageLng.toDouble()
                             )
 
                             Glide.with(activity)
                                 .asBitmap()
-                                .load(postList[ccnt].imagePath)
+                                .load(postList[i].imagePath)
                                 .into(object : SimpleTarget<Bitmap>(200, 200) {
 
                                     //正常に写真取得できればピンを打つ
@@ -165,6 +180,7 @@ class MapsHome : Fragment(), OnMapReadyCallback {
                                         val imageView = ImageView(activity)
                                         imageView.setImageBitmap(resource)
                                         iconGenerator.setContentView(imageView)
+
                                         mmm = mMap!!.addMarker(
                                             MarkerOptions()
                                                 .position(spot)
@@ -173,6 +189,7 @@ class MapsHome : Fragment(), OnMapReadyCallback {
                                                 //.icon(BitmapDescriptorFactory.fromBitmap(resource))
                                                 .icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()))
                                         )
+                                        markerFlag = true
                                     }
                                 })
                             ccnt++
