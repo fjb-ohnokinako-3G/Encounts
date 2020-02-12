@@ -46,6 +46,7 @@ class MapsHome : Fragment(), OnMapReadyCallback {
     private var cnt = 0
     //マップ上に打ったピンを管理するためのList
     val mMarkers = mutableListOf<Marker>()
+    var mMarkersOld = mutableListOf<Marker>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -86,20 +87,8 @@ class MapsHome : Fragment(), OnMapReadyCallback {
             for (location in locationResult.locations) {
 
                 if (location != null) {
-
-                    //前回取得時と今回取得時の座標が大きく違えば(10m)、ピンを打つ処理を再度行う
-                    //if ((latitude+0.0001 < location.latitude) or (latitude-0.0001 > location.latitude) or (mMarkers.size==0)){
-                        //if ((longitude+0.0001 < location.longitude) or (longitude-0.0001 > location.longitude) or (mMarkers.size==0)){
-
-                            //以前にマップに打ったピンを全削除する
-                            if(mMarkers.size >= 1){
-                                val itr = mMarkers.iterator()
-                                while (itr.hasNext()){
-                                    val m: Marker = itr.next()
-                                    m.remove()//地図上から削除
-                                    itr.remove()//リストからも削除
-                                }
-                            }
+                            //前回打ったピンを全てOldに移動
+                            mMarkersOld = mMarkers.toMutableList()
 
                             //グローバル変数に位置情報を代入
                             latitude = location.latitude
@@ -165,6 +154,7 @@ class MapsHome : Fragment(), OnMapReadyCallback {
                                                 val imageView = ImageView(activity)
                                                 imageView.setImageBitmap(resource)
                                                 iconGenerator.setContentView(imageView)
+
                                                 //ピンを打ちつつ、Listにも追加
                                                 mMarkers.add(mMap!!.addMarker(
                                                     MarkerOptions()
@@ -177,10 +167,17 @@ class MapsHome : Fragment(), OnMapReadyCallback {
                                             }
                                         })
                                 }
-                            //}
-                        //}
+                                //ピンが打ち終わったら、前回打ったピンを全削除する
+                                //この処理をしないでピンを全削除すると、ピンが点滅してしまう
+                                if(mMarkersOld.size >= 1){
+                                    val itr = mMarkersOld.iterator()
+                                    while (itr.hasNext()){
+                                        val m: Marker = itr.next()
+                                        m.remove()//地図上から削除
+                                        itr.remove()//リストからも削除
+                                    }
+                                }
                     }
-
                 }
             }
         }
