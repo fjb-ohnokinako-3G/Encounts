@@ -47,9 +47,11 @@ class MapsHome : Fragment(), OnMapReadyCallback {
     //マップ上に打つピンを管理するための変数
     private var mmm: Marker? = null
     //下のfor文内で使うカウント変数
-    var ccnt = 0
+    //var ccnt = 0
 
-    var markerFlag: Boolean = false
+    val mMarkers = mutableListOf<Marker>()
+    //val list: List<Marker> = mutableListOf()
+    //var markerFlag: Boolean = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -90,12 +92,17 @@ class MapsHome : Fragment(), OnMapReadyCallback {
             locationResult ?: return
             for (location in locationResult.locations) {
 
+
                 if (location != null) {
 
-                    //前回マップ上に打ったピンを全て削除
-                    if (markerFlag.equals(true)) {
-                        println("ここでまーかーを削除")
-                        mmm!!.remove()
+                    //以前にマップに打ったピンを全削除する
+                    if(mMarkers.size >= 1){
+                        val itr = mMarkers.iterator()
+                        while (itr.hasNext()){
+                            val m: Marker = itr.next()
+                            m.remove()//地図上から削除
+                            itr.remove()//リストからも削除
+                        }
                     }
 
 
@@ -130,9 +137,6 @@ class MapsHome : Fragment(), OnMapReadyCallback {
                     val adminArea = addressList?.first()!!.adminArea
                     println(adminArea)
 
-
-
-
                     //マップの移動範囲を制限
                     var maxLat = latitude + 0.001
                     var maxLng = longitude + 0.002
@@ -144,11 +148,7 @@ class MapsHome : Fragment(), OnMapReadyCallback {
                     //写真が１件以上あれば、マップのピンを立てる処理を行う
                     if (cnt >= 1) {
 
-
-
-                        ccnt = 0
-
-                        println("ccnt" + ccnt)
+                        //ccnt = 0
 
                         //取得した写真の件数分ピンを打つ処理
                         //for(i in postList)にすると、初回の写真取得で数値がおかしくなるので、仕方なく変数を用意している。
@@ -189,10 +189,11 @@ class MapsHome : Fragment(), OnMapReadyCallback {
                                                 //.icon(BitmapDescriptorFactory.fromBitmap(resource))
                                                 .icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()))
                                         )
-                                        markerFlag = true
+                                        mMarkers.add(mmm!!)
+                                        //markerFlag = true
                                     }
                                 })
-                            ccnt++
+                            //ccnt++
                         }
                     }
                 }
