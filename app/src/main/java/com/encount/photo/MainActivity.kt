@@ -47,7 +47,8 @@ class MainActivity : AppCompatActivity() {
         }
         //チュートリアルを表示
         //初回起動時のみ表示
-        //TutorialActivity.showIfNeeded(this@MainActivity,savedInstanceState)
+        //いらなければ削除しても可
+        TutorialActivity.showIfNeeded(this@MainActivity,savedInstanceState)
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
